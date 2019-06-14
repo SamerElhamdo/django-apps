@@ -1,8 +1,9 @@
 from django.shortcuts import render, HttpResponse
 from .forms import ProdectForm
-from .models import Prodect, Discount
+from .models import Prodect
 from django.utils import timezone
 from django.db.models import F, DecimalField
+from django.db.models.functions import Upper
 
 
 import nexmo
@@ -29,14 +30,13 @@ def home_view(request):
         if prodectForm.is_valid():
             prodectForm.save()  
             prodectForm = ProdectForm()
-            return render(request, 'index.html', {'prodectForm': prodectForm})
+            return render(request, 'store/index.html', {'prodectForm': prodectForm})
         else:
             return HttpResponse('hi rrr')
     
     else:
         prodectForm = ProdectForm()
-
-        return render(request, 'index.html', {'prodectForm': prodectForm})
+        return render(request, 'store/index.html', {'prodectForm': prodectForm})
 
     
     
@@ -45,9 +45,5 @@ def home_view(request):
 def list_view(request):
     
     prodects = Prodect.objects.all()
-    for prodect in prodects:
-        discount_percentage = Discount.objects.filter(product_id=prodect.id).first()
-        prodect = Prodect.objects.filter(id=prodect.id).annotate(new_price=F('price')*discount_percentage)
 
-
-    return render(request, 'list.html', {'prodects': prodects})
+    return render(request, 'store/list.html', {'prodects': prodects})

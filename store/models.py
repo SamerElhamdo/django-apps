@@ -12,19 +12,21 @@ class Prodect(models.Model):
 
     title = models.CharField(max_length=150)
     price = models.IntegerField(default=170)
+    discount = models.BooleanField(default=True)
+    percentage = models.DecimalField(max_digits=19, decimal_places=2)
+    new_price = models.IntegerField(blank=True)
     img = models.ImageField(upload_to = 'images')
 
+    
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
 
-class Discount(models.Model):
-    discount_id = models.AutoField(primary_key=True)
-    product_id = models.ForeignKey(Prodect, on_delete=models.CASCADE)
-    title = models.CharField(max_length=150)
-    percentage = models.DecimalField(max_digits=19, decimal_places=2)
-    expire_date = models.DateField()
+        decimal = self.percentage / 100
 
+        self.new_price = self.price - (self.price * decimal)
 
-    def __str__(self):
-        return self.title
+        super().save(*args, **kwargs)  # Call the "real" save() method.
+
+    

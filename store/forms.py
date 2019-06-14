@@ -5,4 +5,4 @@ class ProdectForm(forms.ModelForm):
 
     class Meta:
         model = Prodect
-        fields = ('title', 'price', 'img' )
+        fields = ('title', 'price', 'img', 'discount', 'percentage' )

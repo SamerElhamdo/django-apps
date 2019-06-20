@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="card" style="width: 20rem;">
+    <img class="card-img-top" src="{{ product.img.url }}" alt="Card image cap">
+    <div class="card-block">
+        <h4 class="card-title">{{ product.title }}</h4>
+        <h4 class="card-title">{{ product.price }}</h4>
+    
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    </div>
+</div>
+
+
+<form method="post" enctype="multipart/form-data">
+
+{% csrf_token %}
+{{ form|crispy }}
+
+{% if product.productattribute_set.all  %}
+
+ 
+{% if product.productattribute_set.colors %}      
+<div id="div_id_color" class="form-group">
+     <label for="id_color" class="col-form-label  requiredField">
+        Color<span class="asteriskField">*</span>
+     </label>
+     <div class="">
+            <select  name="color" class="select form-control" required="" id="id_color">
+                
+                {% for option in product.productattribute_set.colors %}
+                <option value="{{ option.attr }}" >{{ option.attr }}</option>       
+                {% endfor %}
+                    
+            </select>
+    </div>
+ </div>
+ {% endif %}
+
+ {% if product.productattribute_set.sizes %}
+
+
+ <div id="div_id_size" class="form-group">
+        <label for="id_size" class="col-form-label  requiredField">
+           size<span class="asteriskField">*</span>
+        </label>
+        <div class="">
+               <select  name="size" class="select form-control" required="" id="id_size">
+                   
+                   {% for option in product.productattribute_set.sizes %}
+                   <option value="{{ option.attr }}" >{{ option.attr }}</option>       
+                   {% endfor %}
+                       
+               </select>
+       </div>
+    </div>
+
+{% endif %}
+    
+{% endif %}
+
+
+<input type="submit" name="submit" value="شراء" />
+</form>
+
+
+
+
+
+    
+{% endblock %}

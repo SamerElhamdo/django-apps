@@ -1,6 +1,6 @@
-from django.shortcuts import render, HttpResponse
-from .forms import ProdectForm
-from .models import Prodect
+from django.shortcuts import render, HttpResponse, get_object_or_404, redirect
+from .forms import ProductForm, OrderForm
+from .models import Product, Order
 from django.utils import timezone
 from django.db.models import F, DecimalField
 from django.db.models.functions import Upper
@@ -25,12 +25,23 @@ def home_view(request):
     else:
         print("Error: %s" % response["error_text"])
     '''
+    products = Product.objects.all()
+
+    return render(request, 'store/list.html', {'products': products})
+
+
+    
+    
+    #return HttpResponse("Hello World!")
+
+def product_form(request):
+
     if request.method == 'POST':
-        prodectForm = ProdectForm(request.POST, request.FILES)
-        if prodectForm.is_valid():
-            prodectForm.save()  
-            prodectForm = ProdectForm()
-            return render(request, 'store/index.html', {'prodectForm': prodectForm})
+        productForm = ProductForm(request.POST, request.FILES)
+        if productForm.is_valid():
+            productForm.save()  
+            productForm = ProductForm()
+            return render(request, 'store/new-product.html', {'productForm': productForm})
         else:
             return HttpResponse('hi rrr')
     
@@ -38,12 +49,22 @@ def home_view(request):
         prodectForm = ProdectForm()
         return render(request, 'store/index.html', {'prodectForm': prodectForm})
 
-    
-    
-    #return HttpResponse("Hello World!")
 
-def list_view(request):
-    
-    prodects = Prodect.objects.all()
 
-    return render(request, 'store/list.html', {'prodects': prodects})
+def order_form(request, product_id):
+    product = get_object_or_404(Product,pk=product_id)
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            form.cleaned_data['color'] = request.POST.get('color')
+            form.cleaned_data['size'] = request.POST.get('size')
+            
+            form.save()
+            return redirect('/')
+    else:
+        form = OrderForm(initial = {'product': product_id})
+    context = {
+        'form': form,
+        'product':product,
+    }
+    return render(request, 'store/new-order.html', context)

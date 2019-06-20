@@ -1,21 +1,19 @@
 {% extends "base.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
-
 
 
 
 {% block content %}
 
-    {% for prodect in prodects %}
+    {% for product in products %}
         <div class="card" style="width: 20rem;">
-            <img class="card-img-top" src="{{ prodect.img.url }}" alt="Card image cap">
+            <img class="card-img-top" src="{{ product.img.url }}" alt="Card image cap">
             <div class="card-block">
-                <h4 class="card-title">{{ prodect.title }}</h4>
-                <h4 class="card-title">{{ prodect.price }}</h4>
+                <h4 class="card-title">{{ product.title }}</h4>
+                <h4 class="card-title">{{ product.price }}</h4>
             
             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">اشتري الان</a>
+            <a href="{% url 'order_form' product.id %}" class="btn btn-primary">اشتري الان</a>
             </div>
         </div>
     {% endfor %}

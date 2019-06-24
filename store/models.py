@@ -15,7 +15,7 @@ class Product(models.Model):
     price = models.IntegerField(default=170)
 
     percentage = models.DecimalField(max_digits=19, decimal_places=2, blank=True, null=True)
-    img = models.ImageField(upload_to = 'images')
+    img = models.ImageField(upload_to = 'images', blank=True, null=True)
 
     
     def __str__(self):

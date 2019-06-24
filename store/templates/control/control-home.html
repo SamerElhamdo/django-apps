@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<h1 class="text-center">{{ title }}</h1>
+<div class="row">
+    <div class="control-card mt-3 col-lg-4 col-md-4 col-sm-6 col-12">
+        <a class="bg-primary"  href="{% url 'new_product' %}">أضافة منتج جديد</a>
+    </div>
+    <div class="control-card mt-3 col-lg-4 col-md-4 col-sm-6 col-12">
+        <a class="bg-primary" href="{% url 'control_list_product' %}">تعديل و حذف المنتجات</a>
+    </div>
+
+    <div class="control-card mt-3 col-lg-4 col-md-4 col-sm-6 col-12">
+        <a class="bg-danger"  href="{% url 'new_product' %}">الطلبات الجديدة</a>
+    </div>
+    <div class="control-card mt-3 col-lg-4 col-md-4 col-sm-6 col-12">
+        <a class="bg-success" href="{% url 'new_product' %}">سجل الطلبات</a>
+    </div>
+</div>
+
+    
+{% endblock %}

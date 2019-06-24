@@ -4,71 +4,131 @@
 
 {% block content %}
 
-<div class="card" style="width: 20rem;">
-    <img class="card-img-top" src="{{ product.img.url }}" alt="Card image cap">
-    <div class="card-block">
-        <h4 class="card-title">{{ product.title }}</h4>
-        <h4 class="card-title">{{ product.price }}</h4>
-    
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+<div class="row mt-3">
+    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 gallery">
+        <div class="row">
+            <div class="gallery-big col-lg-11 col-md-11 col-sm-12 col-xs-12" >
+                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                        <ol class="carousel-indicators mr-0">
+                                {% for image in product.image_set.all %}
+
+                                {% if image == product.image_set.first %}
+                                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                                {% else %}
+                                <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter0 }}"></li>
+                                {% endif %}
+                                {% endfor %}
+                        </ol>
+                        <div class="carousel-inner">
+
+
+
+                            {% for image in product.image_set.all %}
+
+                            {% if image == product.image_set.first %}
+                            <div class="carousel-item active">
+                                <img class="d-block w-100" src="http://192.168.1.114:8000{{ product.image_set.first.image.url }}" alt="First slide">
+                            </div>
+                            {% else %}
+                            <div class="carousel-item">
+                                <img class="d-block " src="http://192.168.1.114:8000{{ image.image.url }}" alt="First slide">
+                            </div>
+                            {% endif %}
+
+
+                            
+                            
+                            {% endfor %}
+
+                        </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-1">
+
+            </div>
+            <div class="col-lg-12">
+                    <h4>{{ product.title }}</h4>
+                    <h4> السعر: {{ product.price }}</h4>
+                    {% if product.discount_set.first %}
+                    <p>{{ product.discount_set.first.percentage }}</p>
+                    {% endif %}
+                    
+                
+            </div>
+
+        </div>
+
     </div>
+    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 form-order mt-3">
+            <form method="post" enctype="multipart/form-data ">
+
+                {% csrf_token %}
+                
+                
+                {{ form|crispy }}
+                
+                {% if product.productattribute_set.all  %}
+                
+                 
+                {% if product.productattribute_set.colors %}      
+                <div id="div_id_color" class="form-group">
+                     <label for="id_color" class="col-form-label  requiredField">
+                        أختر اللون<span class="asteriskField">*</span>
+                     </label>
+                     <div class="">
+                            <select  name="color" class="select form-control" required="" id="id_color">
+                                
+                                {% for option in product.productattribute_set.colors %}
+                                <option value="{{ option.attr }}" >{{ option.attr }}</option>       
+                                {% endfor %}
+                                    
+                            </select>
+                    </div>
+                 </div>
+                 {% endif %}
+                
+                 {% if product.productattribute_set.sizes %}
+                
+                
+                 <div id="div_id_size" class="form-group">
+                        <label for="id_size" class="col-form-label  requiredField">
+                           أختر القياس<span class="asteriskField">*</span>
+                        </label>
+                        <div class="">
+                               <select  name="size" class="select form-control" required="" id="id_size">
+                                   
+                                   {% for option in product.productattribute_set.sizes %}
+                                   <option value="{{ option.attr }}" >{{ option.attr }}</option>       
+                                   {% endfor %}
+                                       
+                               </select>
+                       </div>
+                    </div>
+                
+                {% endif %}
+                    
+                {% endif %}
+                
+                
+                <input class="btn btn-danger" type="submit" name="submit" value="شراء" />
+                </form>
+    </div>
+
 </div>
 
 
-<form method="post" enctype="multipart/form-data">
-
-{% csrf_token %}
-{{ form|crispy }}
-
-{% if product.productattribute_set.all  %}
-
- 
-{% if product.productattribute_set.colors %}      
-<div id="div_id_color" class="form-group">
-     <label for="id_color" class="col-form-label  requiredField">
-        Color<span class="asteriskField">*</span>
-     </label>
-     <div class="">
-            <select  name="color" class="select form-control" required="" id="id_color">
-                
-                {% for option in product.productattribute_set.colors %}
-                <option value="{{ option.attr }}" >{{ option.attr }}</option>       
-                {% endfor %}
-                    
-            </select>
-    </div>
- </div>
- {% endif %}
-
- {% if product.productattribute_set.sizes %}
 
 
- <div id="div_id_size" class="form-group">
-        <label for="id_size" class="col-form-label  requiredField">
-           size<span class="asteriskField">*</span>
-        </label>
-        <div class="">
-               <select  name="size" class="select form-control" required="" id="id_size">
-                   
-                   {% for option in product.productattribute_set.sizes %}
-                   <option value="{{ option.attr }}" >{{ option.attr }}</option>       
-                   {% endfor %}
-                       
-               </select>
-       </div>
-    </div>
 
-{% endif %}
+
+
+<script>
+    $(function() {
+        $(".rslides").responsiveSlides();
+    });
+    $("input[type='number']").inputSpinner()
     
-{% endif %}
-
-
-<input type="submit" name="submit" value="شراء" />
-</form>
-
-
-
-
-
+</script>
     
 {% endblock %}

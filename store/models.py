@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 
@@ -12,22 +13,33 @@ class Product(models.Model):
 
     title = models.CharField(max_length=150)
     price = models.IntegerField(default=170)
-    discount = models.BooleanField(default=True)
-    percentage = models.DecimalField(max_digits=19, decimal_places=2)
-    new_price = models.IntegerField(blank=True)
+
+    percentage = models.DecimalField(max_digits=19, decimal_places=2, blank=True, null=True)
     img = models.ImageField(upload_to = 'images')
 
     
     def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
+    def get_absolute_url(self):
+        return reverse('edit_product', kwargs={'product_id': self.pk})
 
-        decimal = self.percentage / 100
+"""     def save(self, *args, **kwargs):
+        if self.discount:
+                
+            decimal = self.percentage / 100
 
-        self.new_price = self.price - (self.price * decimal)
+            self.new_price = self.price - (self.price * decimal)
 
-        super().save(*args, **kwargs)  # Call the "real" save() method.
+            super().save(*args, **kwargs)  
+
+        super().save(*args, **kwargs)   """
+    
+
+
+
+
+
 
 
 
@@ -42,8 +54,8 @@ class ProductAttributeManager(models.Manager):
     
 
 VAR_CATEGORIES = [
-    ('color', 'color'),
-    ('size', 'size'),
+    ('اللون', 'اللون'),
+    ('القياس', 'القياس'),
 
 ]
 
@@ -58,6 +70,22 @@ class ProductAttribute(models.Model):
         return self.attr
 
 
+class Image(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, default=None)
+    image = models.ImageField(upload_to='product/images')
+
+    def __str__(self):
+        return self.product.title + ' صورة '
+
+
+class Discount(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    title = models.CharField(max_length=150)
+    percentage = models.DecimalField(max_digits=19, decimal_places=2)
+    date = models.DateField(auto_now=False, auto_now_add=False)
+
+    def __str__(self):
+        return self.title
 
 
 

@@ -4,19 +4,31 @@
 
 
 {% block content %}
-
+<div class="row">
     {% for product in products %}
-        <div class="card" style="width: 20rem;">
-            <img class="card-img-top" src="{{ product.img.url }}" alt="Card image cap">
-            <div class="card-block">
-                <h4 class="card-title">{{ product.title }}</h4>
-                <h4 class="card-title">{{ product.price }}</h4>
-            
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="{% url 'order_form' product.id %}" class="btn btn-primary">اشتري الان</a>
+    <div class="col-lg-3 col-md-6 col-sm-6 col-6 mt-5">
+        <div class="card-product">
+            <div class="overlaye rounded shadow-sm">
+                <div class="card-product-image " style="background-image: url('http://192.168.1.114:8000{{ product.img.url }}')">
+                    <img src="http://192.168.1.114:8000{{ product.img.url }}" width="100%" height="auto">
+                </div>
+                <a href="{% url 'order_form' product.id %}" class="link-buy">أطلبها الاّن</a>
+                
+                
             </div>
+            <p>{{ product.title }}</p>
+            <p>{{ product.price }}</p>
+            {% if product.discount_set.first %}
+            <p>{{ product.discount_set.first.percentage }}</p>
+            {% endif %}  
         </div>
-    {% endfor %}
 
+
+
+
+    </div>
+
+    {% endfor %}
+</div>
 {% endblock %}
 

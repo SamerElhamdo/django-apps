@@ -1,7 +1,9 @@
 html, body {
     direction: rtl;
     font-family: 'Cairo', sans-serif;
-    height: 2000px;
+}
+button, input, optgroup, select, textarea {
+    font-family: 'Cairo', sans-serif;
 }
 .padding-remove {
     padding: 0;
@@ -19,10 +21,8 @@ nav .navbar-brand {
     text-align: center;
     margin: 5px;
 }
-.card {
-    display: none;
-}
-label[for='id_img'] {
+
+label[for='id_img'], .btn-custom {
     border: solid blue 1px;
     border-radius: 5px;
     padding: 10px;
@@ -98,20 +98,42 @@ label[for='id_img']:hover {
     font-weight: bold;
     margin: 0
 }
+/* start slider  */
+.slide {
+    border: 1px dashed #000;
+    overflow: hidden;
+}
+/* start ordr now */ 
 
+.card-order p {
+    padding: 10px;
+    font-weight: bold;
+    margin: 0;
+    border-bottom: 1px solid #ddd;
+}
+.card-order p:nth-child(1) {
+    border-top: 5px solid #5cb85c;
+}
+
+.card-order p span {
+    color: #5cb85c;
+    font-size: 1.2em
+}
 /* start buy now */
 
 
 .gallery img {
     max-width: 100%;
-    height: auto;
-    object-fit: cover;
+    height: auto !important;
 
 } 
 
-.input-group {
+
+
+
     
-}
+
+
 .control-card a {
     display: -webkit-flex;
     display: flex;
@@ -130,3 +152,48 @@ label[for='id_img']:hover {
     color: #fff;
 
 }
+
+
+
+
+/* start edit album image product  */
+.thumbnail {
+    width: 25%;
+    padding: 2px !important;
+}
+.thumbnail img {
+    width: 100%;
+}
+
+
+
+
+/* start login form   */
+.symbol-input100 {
+    direction: ltr;
+}
+
+/* start slider  */
+.card-slider {
+    background-size: cover;
+}
+
+.card-slider:before {
+    content: " ";
+    padding-top: 50%;
+
+}
+
+ul.thumbnails li {
+    width: 48%;
+    margin: 1% !important;
+}
+
+ul.thumbnails li div {
+    width: 100%
+}
+
+
+
+
+

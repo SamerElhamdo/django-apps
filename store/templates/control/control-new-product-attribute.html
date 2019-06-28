@@ -4,31 +4,53 @@
 
 {% block content %}
 
-<div class="card" style="width: 20rem;">
-    <img class="card-img-top" src="{{ product.img.url }}" alt="Card image cap">
-    <div class="card-block">
-        <h4 class="card-title">{{ product.title }}</h4>
-        <h4 class="card-title">{{ product.price }}</h4>
-    
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+<div class="row">
+    <div class="gallery-big col-12 col-lg-6 col-md-6 col-sm-12 col-xs-12" >
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators m-0">
+            {% for image in product.image_set.all %}
+
+            {% if image == product.image_set.first %}
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            {% else %}
+            <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter0 }}"></li>
+            {% endif %}
+            {% endfor %}
+            </ol>
+            <div class="carousel-inner">
+
+
+
+            {% for image in product.image_set.all %}
+
+            {% if image == product.image_set.first %}
+            <div class="card-slider carousel-item active" style="background-image: url('http://192.168.1.114:8000{{ product.image_set.first.image.url }}')">
+            </div>
+            {% else %}
+            <div class="card-slider carousel-item" style="background-image: url('http://192.168.1.114:8000{{ image.image.url }}')">
+            </div>
+            {% endif %}
+
+
+
+
+            {% endfor %}
+
+            </div>
+        </div>
     </div>
+    <div class="col-12 col-lg-6 col-md-6">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ formsetattr|crispy }}
+            <input type="submit" name="submit" value="أضافة" />
+        </form>
+    </div>
+
+
+
+
 </div>
-
-
-<form method="post" enctype="multipart/form-data">
-
-{% csrf_token %}
-
-
-{{ formsetattr|crispy }}
-
-
-
-<input type="submit" name="submit" value="أضافة" />
-</form>
-
-
-
 
 
 {% endblock %}

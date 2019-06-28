@@ -14,6 +14,8 @@
                 </div>
 
                 <a href="{% url 'edit_product' product.id %}" class="link-buy bg-primary"> تعديل </a>
+                <a href="{% url 'edit_album_product' product.id %}" class="link-buy bg-primary"> تعديل البوم الصور </a>
+                
                 <a href="{% url 'add_product_attribute' product.id %}" class="link-buy bg-primary"> خصائص </a>
                 <a href="{% url 'delete_product' product.id %}" class="link-buy"> حذف  </a>
                 

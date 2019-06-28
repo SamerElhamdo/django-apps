@@ -10,7 +10,8 @@
 
 {% csrf_token %}
 {{ prodectForm|crispy }}
-{{ formset|crispy }}
+
+<input type="file" name="images" multiple>
 
 
 

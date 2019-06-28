@@ -54,8 +54,8 @@ class ProductAttributeManager(models.Manager):
     
 
 VAR_CATEGORIES = [
-    ('اللون', 'اللون'),
-    ('القياس', 'القياس'),
+    ('color', 'اللون'),
+    ('size', 'القياس'),
 
 ]
 
@@ -72,7 +72,7 @@ class ProductAttribute(models.Model):
 
 class Image(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, default=None)
-    image = models.ImageField(upload_to='product/images')
+    image = models.FileField(upload_to='product/images')
 
     def __str__(self):
         return self.product.title + ' صورة '
@@ -96,8 +96,9 @@ class Order(models.Model):
     full_name = models.CharField(max_length=150)
     phonenumber = models.CharField(max_length=10)
     accept = models.BooleanField(default=False)
-    color = models.CharField(max_length=150)
-    size = models.CharField(max_length=150)
+    color = models.CharField(max_length=150, blank=True, null=True)
+    size = models.CharField(max_length=150, blank=True, null=True)
+    date = models.DateTimeField(auto_now_add=True)
     
 
     def __str__(self):

@@ -1,12 +1,16 @@
 from django.shortcuts import render, HttpResponse, get_object_or_404, redirect, HttpResponseRedirect
-from .forms import ProductForm, ProductAttributeForm, ImageForm, OrderForm, ProductDiscountForm
+from .forms import ProductForm, ProductAttributeForm, ImageForm, OrderForm, ProductDiscountForm, LoginForm
 from .models import Product, Image, Order, ProductAttribute
 from django.utils import timezone
 from django.db.models import F, DecimalField
 from django.contrib import messages
 from django.forms.models import modelformset_factory
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login, authenticate
 from django.views.generic.edit import UpdateView
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.models import User
+
 
 
 import nexmo
@@ -35,6 +39,33 @@ def home_view(request):
     return render(request, 'store/list.html', {'products': products})
 
 
+def login_user(request):
+    if request.method == 'POST':
+        form = LoginForm()
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('control_home')
+
+        else:
+            messages.warning(request, 'هناك خطأ في أسم المستخدم أو كلمة المرور')
+    
+    else:
+        if request.user.is_authenticated:
+            return redirect('control_home')
+        form = LoginForm()
+    context = {
+        'form': form,
+        'title': 'تسجيل الدخول',
+    }
+    return render(request, 'control/control-login.html', context)
+        
+
+
+
+
     
     
     #return HttpResponse("Hello World!")
@@ -49,6 +80,8 @@ def order_form(request, product_id):
             
             form.save()
             return redirect('/')
+        else:
+            return HttpResponse('erorr form')
         
     else:
         form = OrderForm(initial = {'product': product_id})
@@ -59,7 +92,36 @@ def order_form(request, product_id):
     return render(request, 'store/new-order.html', context)
 
 
+def list_new_orders(request):
+    orders = Order.objects.all()
+    orders_new = orders.exclude(accept=True)
+    return render(request, 'control/list-orders.html', {'orders': orders_new})
 
+
+def list_history_orders(request):
+    orders = Order.objects.all()
+    orders_history = orders.exclude(accept=False)
+    return render(request, 'control/list-orders.html', {'orders': orders_history})
+
+
+
+
+
+def order_detail(request, order_id):
+    order = get_object_or_404(Order,pk=order_id)
+    context = {
+        'order': order,
+        'title': 'صفحة تفاصيل الطلبية',
+        
+    }
+    return render(request, 'control/order-detail.html', context) 
+        
+
+
+def order_accept(request, order_id):
+    order = Order.objects.filter(pk=order_id).update(accept=True)
+    
+    return redirect('list_history_orders')
 
 
 
@@ -67,7 +129,7 @@ def order_form(request, product_id):
 
 # start control panel
 
-
+@login_required
 def control_home(request):
     context = {
         'title': 'لوحة التحكم'
@@ -89,25 +151,20 @@ def control_list_product(request):
 
 def control_add_product(request):
 
-    ImageFormSet = modelformset_factory(Image, form=ImageForm, extra=3)
+    #ImageFormSet = modelformset_factory(Image, form=ImageForm, extra=3)
     AttributeFormSet = modelformset_factory(ProductAttribute, form=ProductAttributeForm)
 
     if request.method == 'POST':
         productForm = ProductForm(request.POST or None, request.FILES or None)
-        formset = ImageFormSet(request.POST or None, request.FILES or None)
+        #formset = ImageFormSet(request.POST or None, request.FILES or None)
         
-        if productForm.is_valid() and formset.is_valid():
+        if productForm.is_valid():
             productForm.save()
-            for form in formset.cleaned_data:
-                #this helps to not crash if the user   
-                #do not upload all the photos
-                if form:
-                    product_instance = productForm.save()
-                    image = form['image']
-                    photo = Image(product=product_instance, image=image)
-                    photo.save()
-            messages.success(request,
-                             "Yeeew, check it out on the home page!")
+            instance_product = productForm.save()
+
+            for file in request.FILES.getlist('images'):
+                instance = Image(product=get_object_or_404(Product,pk=instance_product.id),image=file)
+                instance.save()
             
             return HttpResponseRedirect("/")
 
@@ -117,12 +174,12 @@ def control_add_product(request):
 
     else:
         productForm = ProductForm()
-        formset = ImageFormSet(queryset=Image.objects.none())
+        #formset = ImageFormSet(queryset=Image.objects.none())
         
 
     context = {
         'prodectForm': productForm,
-        'formset': formset,
+        #'formset': formset,
     }
     return render(request, 'control/control-new-product.html', context)
 
@@ -135,6 +192,25 @@ class ProductUpdate(UpdateView):
     def get_object(self):
         id_ = self.kwargs.get('product_id')
         return get_object_or_404(Product, id=id_)
+
+
+def control_update_image_album_product(request, product_id):
+    if request.method == 'POST':
+
+        Image.objects.filter(id__in=request.POST.getlist('delete_list')).delete()
+        if request.FILES.getlist('images'):
+            for file in request.FILES.getlist('images'):
+                instance = Image(product=get_object_or_404(Product,pk=product_id),image=file)
+                instance.save()
+
+        return redirect('/')
+    else:
+        product = get_object_or_404(Product,pk=product_id)
+        context = {
+            'product': product,
+        }
+    return render(request, 'control/control-update-image-album-product.html', context)
+
 
 
 def control_add_product_attribute(request, product_id):
@@ -159,6 +235,7 @@ def control_add_product_attribute(request, product_id):
     context = {
 
         'formsetattr': formset,
+        'product': product,
 
     }
     return render(request, 'control/control-new-product-attribute.html', context)
@@ -183,14 +260,14 @@ def control_delete_product(request, product_id):
 
     product = get_object_or_404(Product,pk=product_id)
     product.delete()
-    return redirect('/')
+    return redirect('control_list_product')
     
 
 
 
 def logout_view(request):
     logout(request)
-    return redirect('/')
+    return redirect('login')
 
 
 # end control panel

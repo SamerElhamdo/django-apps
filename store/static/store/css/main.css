@@ -1,7 +1,17 @@
 html, body {
     direction: rtl;
     font-family: 'Cairo', sans-serif;
+    text-align: right;
 }
+.slideTo {
+    display: none;
+}
+
+/* عداد الطلبية يمين و يسار*/
+.input-group, .carousel-indicators {
+    direction: ltr;
+}
+
 button, input, optgroup, select, textarea {
     font-family: 'Cairo', sans-serif;
 }
@@ -22,7 +32,7 @@ nav .navbar-brand {
     margin: 5px;
 }
 
-label[for='id_img'], .btn-custom {
+label[for='id_img'], label[for='images'], .btn-custom {
     border: solid blue 1px;
     border-radius: 5px;
     padding: 10px;
@@ -45,9 +55,11 @@ label[for='id_img']:hover {
 }
 .dropdown-menu {
     right: 0;
-    left: 100%;
     text-align: right;
+    width: max-content;
+
 }
+
 .box-height-width-a {
     background-repeat: no-repeat;
     background-size: cover;
@@ -75,14 +87,51 @@ label[for='id_img']:hover {
 	/* initial ratio of 1:1*/
 
 }
-.card-product-image{
+.card-product-image {
 
-	width: 100%;
+    width: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: left;
+    position: relative;
+    -webkit-animation-name: moverImage; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 16s; /* Safari 4.0 - 8.0 */
+    animation-name: moverImage;
+    animation-duration: 16s;
+    animation-iteration-count: infinite;
 }
 
 .card-product-image:before {
-	padding-top: 150%; 	/* initial ratio of 1:1*/
+    content: "";
+	display: block;
+    padding-top: 150%; 	/* initial ratio of 1:1*/
 }
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes moverImage {
+    0%   {background-position: left;}
+    50%  {background-position: right;}
+    100% {background-position: left;}
+  }
+  
+  /* Standard syntax */
+  @keyframes moverImage {
+    0%   {background-position: left;}
+    50%  {background-position: right;}
+    100% {background-position: left;}
+  }
+
+  .discount {
+    position: absolute;
+    display: block;
+    color: #fff;
+    bottom: 5px;
+    text-align: center;
+    background: #ffc107;
+    right: 5px;
+    padding: 3px 10px;
+    border-radius: 5px;
+  }
 
 .link-buy {
     width: 100%;
@@ -95,7 +144,6 @@ label[for='id_img']:hover {
 .card-product p {
     text-align: center;
     padding-top: 10px;
-    font-weight: bold;
     margin: 0
 }
 /* start slider  */
@@ -168,10 +216,6 @@ label[for='id_img']:hover {
 
 
 
-/* start login form   */
-.symbol-input100 {
-    direction: ltr;
-}
 
 /* start slider  */
 .card-slider {
@@ -179,8 +223,10 @@ label[for='id_img']:hover {
 }
 
 .card-slider:before {
-    content: " ";
+    content: "";
     padding-top: 50%;
+    display: block;
+
 
 }
 
@@ -193,7 +239,6 @@ ul.thumbnails li div {
     width: 100%
 }
 
-
-
+/* start footer  */
 
 

@@ -4,20 +4,18 @@
 
 {% block content %}
 
-
+<h3 class="text-center mt-3"> {{ title }}</h3>
 <form id="post_form" method="post" action="" enctype="multipart/form-data">
 
 
 {% csrf_token %}
 {{ prodectForm|crispy }}
+<p>ألبوم الصور*</p>
 
-<input type="file" name="images" multiple>
-
-
-
-
-
-<input type="submit" name="submit" value="Submit" />
+<label for="images">حمل صور الألبوم</label>
+<input type="file" name="images" id="images" hidden multiple>
+<br>
+<input type="submit" name="submit" value="حفظ" class="btn btn-primary mr-auto d-block" />
 </form>
 
 

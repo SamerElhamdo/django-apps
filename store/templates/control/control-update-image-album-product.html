@@ -5,9 +5,9 @@
 
 {% block content %}
 
-
+<h3 class="text-center mt-3"> {{ title }}</h3>
 <div class="row">
-    <div class="gallery-big col-lg-6 col-md-6 col-sm-12 col-xs-12" >
+    <div class="gallery-big col-lg-6 col-md-6 col-sm-12 col-xs-12 pt-3" >
         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators m-0">
                         {% for image in product.image_set.all %}
@@ -41,24 +41,27 @@
                 </div>
         </div>
     </div>
-    <div class="col-lg-6 list-image">
+    <div class="col-lg-6 list-image pt-3">
         <div>
-        <form method="POST" enctype="multipart/form-data" >
-            {% csrf_token %}
-            <select multiple="multiple" name="delete_list" class="image-picker show-html row">
-                {% for image in product.image_set.all %}
-                    <option class="col-lg-6" data-img-src="http://192.168.1.114:8000{{ image.image.url }}" data-img-width="200px" value="{{ image.id }}">Cute Kitten {{ image.id }}</option>
-                {% endfor %}
-            </select>
-            <div >
-                <label for="input-images" class="btn-custom">اختر الصور</label>
-                <input id="input-images" hidden type="file" name="images" multiple>
-            </div>
-            
+            <form method="POST" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <h4>حدد صوراً لحذفها</h4>
+                <select multiple="multiple" name="delete_list" class="image-picker show-html row">
+                    {% for image in product.image_set.all %}
+                        <option class="col-lg-6" data-img-src="http://192.168.1.114:8000{{ image.image.url }}" data-img-width="200px" value="{{ image.id }}">Cute Kitten {{ image.id }}</option>
+                    {% endfor %}
+                </select>
+                <div >
+                    <label for="input-images" class="btn btn-primary mt-3">أضف صور</label>
+                    <input id="input-images" hidden type="file" name="images" multiple>
+                    <label for="images-save" class="btn btn-danger mt-3" style="float: left">إحفظ التعديلات</label>
+                    <input id=images-save class="btn btn-danger" hidden type="submit" name="submit" value="save" />
+                </div>
+                
 
-            <input class="btn btn-danger" type="submit" name="submit" value="save"/>
-        </form>
-    </div>
+                
+            </form>
+        </div>
     </div>
 </div>
 

@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<h3 class="text-center mt-3"> {{ title }}</h3>
 <div class="row">
 
 
@@ -17,7 +18,7 @@
                 
                 
 
-                <div class="card-product-image " style="background-image: url('http://192.168.1.114:8000{{ order.product.img.url }}')">
+                <div class="card-product-image-admin " style="background-image: url('http://192.168.1.114:8000{{ order.product.img.url }}')">
                 <img src="http://192.168.1.114:8000{{ order.product.img.url }}" width="100%" height="auto">
                 </div>
                 <p><span>أسم المنتج : </span>{{ order.product.title }}</p>

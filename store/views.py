@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse, get_object_or_404, redirect, HttpResponseRedirect
 from .forms import ProductForm, ProductAttributeForm, ImageForm, OrderForm, ProductDiscountForm, LoginForm
-from .models import Product, Image, Order, ProductAttribute
+from .models import Category, Product, Image, Order, ProductAttribute, Discount
 from django.utils import timezone
 from django.db.models import F, DecimalField
 from django.contrib import messages
@@ -34,12 +34,24 @@ def home_view(request):
     else:
         print("Error: %s" % response["error_text"])
     '''
-    products = Product.objects.all()
+    title = 'الرئيسية'
+    categorys = Category.objects.all()
+    query_list = Product.objects.all()
+    query = request.GET.get("q")
+    if query:
+        query_list = query_list.filter(title__icontains=query)
 
-    return render(request, 'store/list.html', {'products': products})
+    return render(request, 'store/list.html', {'title': title, 'products': query_list, 'categorys': categorys })
 
+def category_list(request, category_id ):
+    categorys = Category.objects.all()
+    title = get_object_or_404(Category,pk=category_id)
+    query_list = Product.objects.filter(category_id=category_id)
+
+    return render(request, 'store/category-list.html', {'title': title, 'products': query_list, 'categorys': categorys })
 
 def login_user(request):
+    title = 'تسجيل الدخول'
     if request.method == 'POST':
         form = LoginForm()
         username = request.POST['username']
@@ -58,7 +70,7 @@ def login_user(request):
         form = LoginForm()
     context = {
         'form': form,
-        'title': 'تسجيل الدخول',
+        'title': title,
     }
     return render(request, 'control/control-login.html', context)
         
@@ -71,6 +83,8 @@ def login_user(request):
     #return HttpResponse("Hello World!")
 
 def order_form(request, product_id):
+    categorys = Category.objects.all()
+    title = 'شراء منتج '
     product = get_object_or_404(Product,pk=product_id)
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -86,6 +100,8 @@ def order_form(request, product_id):
     else:
         form = OrderForm(initial = {'product': product_id})
     context = {
+        'categorys': categorys,
+        'title': title,
         'form': form,
         'product':product,
     }
@@ -93,23 +109,27 @@ def order_form(request, product_id):
 
 
 def list_new_orders(request):
+    title = 'الطلبات الجديدة'
     orders = Order.objects.all()
     orders_new = orders.exclude(accept=True)
-    return render(request, 'control/list-orders.html', {'orders': orders_new})
+    return render(request, 'control/list-orders.html', {'title': title, 'orders': orders_new})
 
 
 def list_history_orders(request):
+    title = 'سجل الطلبات '
     orders = Order.objects.all()
     orders_history = orders.exclude(accept=False)
-    return render(request, 'control/list-orders.html', {'orders': orders_history})
+    return render(request, 'control/list-orders.html', {'title': title, 'orders': orders_history})
 
 
 
 
 
 def order_detail(request, order_id):
+    title = ' تفاصيل الطلبية '
     order = get_object_or_404(Order,pk=order_id)
     context = {
+        'title': title,
         'order': order,
         'title': 'صفحة تفاصيل الطلبية',
         
@@ -141,16 +161,16 @@ def control_home(request):
 
 
 def control_list_product(request):
-
+    title = ' قائمة المنتجات '
     products = Product.objects.all()
 
-    return render(request, 'control/control-list.html', {'products': products})
+    return render(request, 'control/control-list.html', {'title': title, 'products': products})
     
 
 
 
 def control_add_product(request):
-
+    title = 'أضافة منتج'
     #ImageFormSet = modelformset_factory(Image, form=ImageForm, extra=3)
     AttributeFormSet = modelformset_factory(ProductAttribute, form=ProductAttributeForm)
 
@@ -178,6 +198,7 @@ def control_add_product(request):
         
 
     context = {
+        'title': title, 
         'prodectForm': productForm,
         #'formset': formset,
     }
@@ -195,6 +216,7 @@ class ProductUpdate(UpdateView):
 
 
 def control_update_image_album_product(request, product_id):
+    title = 'تعديل البوم الصور '
     if request.method == 'POST':
 
         Image.objects.filter(id__in=request.POST.getlist('delete_list')).delete()
@@ -203,10 +225,11 @@ def control_update_image_album_product(request, product_id):
                 instance = Image(product=get_object_or_404(Product,pk=product_id),image=file)
                 instance.save()
 
-        return redirect('/')
+        return redirect('control_list_product')
     else:
         product = get_object_or_404(Product,pk=product_id)
         context = {
+            'title': title,
             'product': product,
         }
     return render(request, 'control/control-update-image-album-product.html', context)
@@ -214,6 +237,7 @@ def control_update_image_album_product(request, product_id):
 
 
 def control_add_product_attribute(request, product_id):
+    title = 'أضافة قياس و لون '
     product = get_object_or_404(Product,pk=product_id)
     AttributeFormSet = modelformset_factory(ProductAttribute, form=ProductAttributeForm)
 
@@ -233,7 +257,7 @@ def control_add_product_attribute(request, product_id):
 
         formset = AttributeFormSet(queryset=ProductAttribute.objects.filter(product__id=product.id))
     context = {
-
+        'title': title,
         'formsetattr': formset,
         'product': product,
 
@@ -241,26 +265,30 @@ def control_add_product_attribute(request, product_id):
     return render(request, 'control/control-new-product-attribute.html', context)
 
 def control_add_product_discount(request, product_id):
+    title = 'أضافة  حسم '
     product = get_object_or_404(Product,pk=product_id)
     if request.method == 'POST':
         form = ProductDiscountForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/')
+            return redirect('control_list_product')
     else:
         form = ProductDiscountForm(initial = {'product': product_id})
     context = {
-
+        'title': title,
         'product':product,
         'form': form,
     }
     return render(request, 'control/control-new-product-discount.html', context)
 
 def control_delete_product(request, product_id):
-
+    title = 'حذف المنتج   '
     product = get_object_or_404(Product,pk=product_id)
-    product.delete()
-    return redirect('control_list_product')
+    if request.method == 'POST':
+        product.delete()
+        return redirect('control_list_product')
+    return render(request, 'control/confirm-delete.html', {'title': title, 'product': product})
+    
     
 
 
@@ -276,8 +304,10 @@ def logout_view(request):
 
 
 def product_detail(request, product_id):
+    title = 'تفاصيل المنتج'
     product = get_object_or_404(Product,pk=product_id)
     context = {
+        'title': title, 
         'product': product
     }
     return render(request, 'store/product-detail.html', context)

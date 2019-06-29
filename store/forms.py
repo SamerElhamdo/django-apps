@@ -35,11 +35,13 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ('title', 'price', 'img', )
+        fields = ('category', 'title', 'price', 'img', )
 
 
         labels = {
+            'category': _('النوع '),
             'title': _('أسم المنتج'),
+            
             'price': _(' سعر المنتج'),
             'img': _('صورة المنتج'),
 
@@ -60,10 +62,16 @@ class ProductDiscountForm(forms.ModelForm):
     class Meta:
         model = Discount
         fields = ('product', 'title', 'percentage', 'date',)
+    
 
         widgets = {
 
             'product': forms.HiddenInput(),
+            'date': forms.DateInput(format=('%d/%m/%Y'), 
+                                             attrs={'type': 'date',
+
+                                             'min': '2019-7-5',
+                                             'placeholder':'أدخل تاريخ صالحاً'}),
  
         }
 
@@ -135,7 +143,9 @@ class OrderForm(forms.ModelForm):
 
 
         widgets = {
-            'quantity': forms.TextInput(attrs={'maxlength':'100'}),
+            'quantity': forms.TextInput(attrs={'min':'1',
+            'max':'999',
+            'type': 'number'}),
             'product': forms.HiddenInput(),
             'color': forms.HiddenInput(),
             'size': forms.HiddenInput(),

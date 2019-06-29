@@ -2,8 +2,13 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block content %}
+{% block static %}
 
+    
+{% endblock  %}
+    
+{% block content %}
+<h3 class="text-center mt-3"> {{ title }}</h3>
 <div class="row">
     <div class="col-lg-6 col-md-6 col-12 mt-3">
         <form method="post" enctype="multipart/form-data">
@@ -13,24 +18,16 @@
 
             {{ form|crispy }}
 
-            <div class="form-group">
-                <div class="input-group date" id="datetimepicker4" data-target-input="nearest">
-                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker4"/>
-                    <div class="input-group-append" data-target="#datetimepicker4" data-toggle="datetimepicker">
-                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                    </div>
-                </div>
-            </div>
             
             
             
-            <input class="btn btn-danger"  type="submit" name="submit" value="أضافة" />
+            <input class="btn btn-danger"  type="submit" name="submit" value="أضافة الحسم" />
         </form>
     </div>
     <div class="col-lg-6 col-md-6 col-12 mt-3">
             <div class="card-product">
                     <div class="overlaye rounded shadow-sm">
-                        <div class="card-product-image " style="background-image: url('http://192.168.1.114:8000{{ product.img.url }}')">
+                        <div class="card-product-image-admin">
                             <img src="http://192.168.1.114:8000{{ product.img.url }}" width="100%" height="auto">
                         </div>
                         
@@ -39,7 +36,8 @@
                     <p>{{ product.title }}</p>
                     <p>{{ product.price }}</p>
                     {% if product.discount_set.first %}
-                    <p>{{ product.discount_set.first.percentage }}</p>  
+                    <p>{{ product.new_price }}</p>
+                    <p>الحسم الحالي: {{ product.discount_set.first.percentage }}</p>  
                     {% else %}
                     <p>لا يوجد حسم حاليا</p>
                     {% endif %}
@@ -54,3 +52,10 @@
 
 
 {% endblock %}
+
+
+{% block script %}
+    
+{% endblock  %}
+    
+    

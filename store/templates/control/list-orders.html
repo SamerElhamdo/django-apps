@@ -5,6 +5,7 @@
 
 
 {% block content %}
+<h3 class="text-center mt-3"> {{ title }}</h3>
 <div class="row">
     {% for order in orders %}
     <div class="col-lg-3 col-md-6 col-sm-6 col-12 mt-5">
@@ -14,7 +15,7 @@
                 <p><span> رقم الهاتف : </span>{{ order.phonenumber }}</p>
                 <p><span>العدد : </span>{{ order.quantity }}</p>
                 
-                <div class="card-product-image " style="background-image: url('http://192.168.1.114:8000{{ order.product.img.url }}')">
+                <div class="card-product-image-admin " style="background-image: url('http://192.168.1.114:8000{{ order.product.img.url }}')">
                     <img src="http://192.168.1.114:8000{{ order.product.img.url }}" width="100%" height="auto">
                 </div>
                 <p><span>أسم المنتج : </span>{{ order.product.title }}</p>

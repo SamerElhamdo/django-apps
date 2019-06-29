@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<h1 class="text-center">{{ title }}</h1>
+<h1 class="text-center mt-3">{{ title }}</h1>
 <div class="row">
     <div class="control-card mt-3 col-lg-4 col-md-4 col-sm-6 col-6">
         <a class="bg-primary"  href="{% url 'new_product' %}">
@@ -37,7 +37,7 @@
         </a>
     </div>
     <div class="control-card mt-3 col-lg-4 col-md-4 col-sm-6 col-6">
-        <a class="bg-secondary text-primary" href="{% url 'list_history_orders' %}">
+        <a class="bg-secondary" href="{% url 'list_history_orders' %}">
             <div class="text-center">
                     <span><i class="fas fa-history h2 mb-1"></i></span>
                     <br>

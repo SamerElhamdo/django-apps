@@ -47,6 +47,9 @@ def category_list(request, category_id ):
     categorys = Category.objects.all()
     title = get_object_or_404(Category,pk=category_id)
     query_list = Product.objects.filter(category_id=category_id)
+    query = request.GET.get("q")
+    if query:
+        query_list = query_list.filter(title__icontains=query)
 
     return render(request, 'store/category-list.html', {'title': title, 'products': query_list, 'categorys': categorys })
 
@@ -91,9 +94,9 @@ def order_form(request, product_id):
         if form.is_valid():
             form.cleaned_data['color'] = request.POST.get('color')
             form.cleaned_data['size'] = request.POST.get('size')
-            
-            form.save()
-            return redirect('/')
+            order = form.save()
+            order = get_object_or_404(Order,pk=order.id)
+            return redirect('confirm_order', order_id=order.id)
         else:
             return HttpResponse('erorr form')
         
@@ -107,6 +110,19 @@ def order_form(request, product_id):
     }
     return render(request, 'store/new-order.html', context)
 
+def confirm_order(request, order_id):
+    categorys = Category.objects.all()
+    title = 'تم تقديم طلبك '
+    order = get_object_or_404(Order,pk=order_id)
+    context = {
+        'categorys': categorys,
+        'title': title,
+        'order': order,
+    }
+
+    return render(request,'store/confirm-order.html', context)
+
+
 
 def list_new_orders(request):
     title = 'الطلبات الجديدة'
@@ -116,7 +132,7 @@ def list_new_orders(request):
 
 
 def list_history_orders(request):
-    title = 'سجل الطلبات '
+    title = 'سجل الطلبات القديمة '
     orders = Order.objects.all()
     orders_history = orders.exclude(accept=False)
     return render(request, 'control/list-orders.html', {'title': title, 'orders': orders_history})
@@ -141,7 +157,7 @@ def order_detail(request, order_id):
 def order_accept(request, order_id):
     order = Order.objects.filter(pk=order_id).update(accept=True)
     
-    return redirect('list_history_orders')
+    return redirect('list_new_orders')
 
 
 
@@ -161,7 +177,7 @@ def control_home(request):
 
 
 def control_list_product(request):
-    title = ' قائمة المنتجات '
+    title = 'صفحة تعديل المنتجات'
     products = Product.objects.all()
 
     return render(request, 'control/control-list.html', {'title': title, 'products': products})
@@ -209,6 +225,7 @@ class ProductUpdate(UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'control/control-edit-product.html'
+    success_url = '/list-product/'
 
     def get_object(self):
         id_ = self.kwargs.get('product_id')

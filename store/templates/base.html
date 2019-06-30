@@ -34,6 +34,7 @@
         <p class="text-center bg-danger text-white m-0 p-3">أهلاً <span class="">{{ user.get_username }}</span> شكراً لتسجيل دخولك </p>
         {% endif %}
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
                 <a class="navbar-brand" href="{% url 'home_view' %}"><span><i class="fas fa-store"></i></span> متجر سدين </a>
                 <br>
                 <button class="navbar-toggler" style="direction: ltr;" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,8 +47,9 @@
                     </li>
 
                         
-
+                    
                     {% if user.is_authenticated %}
+                    <!--عرض خيارت التحكم للمدير فق فقط-->
                     <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               ادارة الموقع
@@ -61,6 +63,8 @@
                             </div>
                     </li>
                     {% else %}
+
+                    <!--عرض الفئات للزبائن فقط-->
                     {% for category in categorys %}
 
                     <li class="nav-item">
@@ -78,6 +82,7 @@
                         
 
                 </div>
+            </div>
         </nav>
         <div class="container">
 

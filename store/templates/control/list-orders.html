@@ -5,11 +5,11 @@
 
 
 {% block content %}
-<h3 class="text-center mt-3"> {{ title }}</h3>
+<h3 class="text-center mt-5"> {{ title }}</h3>
 <div class="row">
     {% for order in orders %}
-    <div class="col-lg-3 col-md-6 col-sm-6 col-12 mt-5">
-        <div class="card-order mb-3 ">
+    <div class="col-lg-4 col-md-4 col-sm-6 col-10 m-sm-0 m-auto">
+        <div class="card-order mb-3 mt-5 ">
             <div class="overlaye rounded shadow-sm">
                 <p><span> الاسم : </span>{{ order.full_name }}</p>
                 <p><span> رقم الهاتف : </span>{{ order.phonenumber }}</p>
@@ -20,9 +20,6 @@
                 </div>
                 <p><span>أسم المنتج : </span>{{ order.product.title }}</p>
                 <p><span> سعر المنتج : </span>{{ order.product.price }}</p>
-                {% if order.product.discount_set.first %}
-                <p><span> قيمة الحسم : </span>{{ order.product.discount_set.first.percentage }}</p>
-                {% endif %}
                 <a href="{% url 'order_detail' order.id %}" class="link-buy bg-success"> مشاهدة التفاصيل </a>
 
                 
